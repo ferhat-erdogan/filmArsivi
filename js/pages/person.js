@@ -164,7 +164,8 @@ async function renderPerson(id) {
     const crew = person.combined_credits?.crew || [];
     const allWorksMap = new Map();
     [...cast, ...crew].forEach(item => { if (!allWorksMap.has(item.id)) allWorksMap.set(item.id, item); });
-    allMovies = Array.from(allWorksMap.values()).sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
+    //allMovies = Array.from(allWorksMap.values()).sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
+    allMovies = Array.from(allWorksMap.values()).sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
 
     const age = calculateAge(person.birthday);
     const departmentMap = { "Acting": "Oyunculuk", "Directing": "Yönetmenlik", "Production": "Yapımcı", "Writing": "Yazarlık" };
