@@ -99,10 +99,20 @@ async function getMovieDetails(id, type = 'movie') {
 }
 
 /**
- * Oyuncu detayı
+ * Oyuncu detayı — TR biyografi yoksa EN fallback
  */
 async function getPersonDetails(personId) {
-    return await fetchData(`/person/${personId}`, `&append_to_response=combined_credits`);
+    const data = await fetchData(`/person/${personId}`, `&append_to_response=combined_credits`);
+    if (!data) return null;
+
+    // TR biyografisi boşsa İngilizce çek
+    if (!data.biography || data.biography.trim() === '') {
+        const enData = await fetchData(`/person/${personId}`, `&append_to_response=combined_credits`, false);
+        if (enData && enData.biography) {
+            data.biography = enData.biography;
+        }
+    }
+    return data;
 }
 
 /**
@@ -126,3 +136,4 @@ async function getCollectionDetails(collectionId) {
 async function getRecommendations(id, type) {
     return await fetchData(`/${type}/${id}/recommendations`);
 }
+

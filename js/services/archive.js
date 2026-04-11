@@ -22,6 +22,8 @@ function showSkeletonCards(container, count = 6) {
 }
 
 // ——— Cache yükle (ilk açılışta bir kez) ———
+// movie_data içinden sadece liste görünümü için gereken alanlar alınır.
+// Detay sayfası zaten TMDB API'den çekiyor — tam veri orada.
 async function loadCache() {
     if (_cacheLoaded) return;
     const db = SupabaseManager.client;
@@ -29,22 +31,51 @@ async function loadCache() {
     if (!db || !userId) return;
 
     const [moviesRes, personsRes] = await Promise.all([
-        db.from('user_movies').select('*').eq('user_id', userId).order('added_at', { ascending: false }),
-        db.from('user_persons').select('*').eq('user_id', userId).order('added_at', { ascending: false })
+        db.from('user_movies')
+            .select('id, tmdb_id, media_type, is_fav, is_watched, added_at, movie_data->id, movie_data->title, movie_data->name, movie_data->poster_path, movie_data->backdrop_path, movie_data->vote_average, movie_data->release_date, movie_data->first_air_date, movie_data->genres, movie_data->original_language, movie_data->adult, movie_data->overview, movie_data->original_title, movie_data->popularity, movie_data->belongs_to_collection, movie_data->birthday')
+            .eq('user_id', userId)
+            .order('added_at', { ascending: false }),
+        db.from('user_persons')
+            .select('id, tmdb_person_id, added_at, person_data->id, person_data->name, person_data->profile_path, person_data->known_for_department, person_data->birthday, person_data->gender')
+            .eq('user_id', userId)
+            .order('added_at', { ascending: false })
     ]);
 
     _moviesCache = (moviesRes.data || []).map(row => ({
-        ...row.movie_data,
-        _rowId: row.id,
+        // movie_data alanları Supabase tarafından düzleştirilmiş gelir
+        id:                    row.id_1 || row.id,
+        title:                 row.title,
+        name:                  row.name,
+        poster_path:           row.poster_path,
+        backdrop_path:         row.backdrop_path,
+        vote_average:          row.vote_average,
+        release_date:          row.release_date,
+        first_air_date:        row.first_air_date,
+        genres:                row.genres,
+        original_language:     row.original_language,
+        adult:                 row.adult,
+        overview:              row.overview,
+        original_title:        row.original_title,
+        popularity:            row.popularity,
+        belongs_to_collection: row.belongs_to_collection,
+        birthday:              row.birthday,
+        // Arşiv meta
+        _rowId:    row.id,
+        tmdb_id:   row.tmdb_id,
         media_type: row.media_type,
-        isFav: row.is_fav,
+        isFav:     row.is_fav,
         isWatched: row.is_watched,
         addedDate: row.added_at
     }));
 
     _personsCache = (personsRes.data || []).map(row => ({
-        ...row.person_data,
-        _rowId: row.id,
+        id:                   row.id_1 || row.id,
+        name:                 row.name,
+        profile_path:         row.profile_path,
+        known_for_department: row.known_for_department,
+        birthday:             row.birthday,
+        gender:               row.gender,
+        _rowId:   row.id,
         addedDate: row.added_at
     }));
 

@@ -11,11 +11,62 @@ const itemsPerPage = 12;
 let isLoading = false;
 let lastScrollY = window.scrollY;
 
+// Global scroll pozisyonu takibi için
+let currentScrollPosition = 0;
+let scrollRestoreAttempts = 0;
+const MAX_SCROLL_RESTORE_ATTEMPTS = 10;
+
 const IMAGE_PATH = "https://image.tmdb.org/t/p/w185";
 
 const PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='185' height='278' viewBox='0 0 185 278'%3e%3cdefs%3e%3clinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' stop-color='%231a1a1a'/%3e%3cstop offset='100%25' stop-color='%230f0f0f'/%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='100%25' height='100%25' fill='url(%23g)'/%3e%3cg fill='none' stroke='%23333' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' transform='translate(77%2c 110)'%3e%3crect x='2' y='2' width='28' height='22' rx='3'/%3e%3cpath d='M2 10h28M10 2v22'/%3e%3c/g%3e%3ctext x='50%25' y='60%25' font-family='sans-serif' font-size='9' font-weight='700' fill='%23444' text-anchor='middle' style='letter-spacing%3a2px'%3eGÖRSEL YOK%3c%2ftext%3e%3c%2fsvg%3e";
 
 const USER_PLACEHOLDER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='185' height='278' viewBox='0 0 185 278'%3e%3cdefs%3e%3clinearGradient id='ug' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3e%3cstop offset='0%25' stop-color='%23111'/%3e%3cstop offset='100%25' stop-color='%23050505'/%3e%3c/linearGradient%3e%3c/defs%3e%3crect width='100%25' height='100%25' fill='url(%23ug)'/%3e%3cg fill='%23222' transform='translate(67%2c 100)'%3e%3ccircle cx='25' cy='18' r='14'/%3e%3cpath d='M25 36c-18 0-25 10-25 18v4h50v-4c0-8-7-18-25-18z'/%3e%3c%2fg%3e%3ctext x='50%25' y='68%25' font-family='sans-serif' font-size='9' font-weight='700' fill='%23333' text-anchor='middle' style='letter-spacing%3a2px'%3eGÖRSEL YOK%3c%2ftext%3e%3c%2fsvg%3e";
+
+// ——— Scroll pozisyonunu kaydet (her durumda çalışacak) ———
+function saveScrollPosition() {
+    const personId = new URLSearchParams(window.location.search).get('id');
+    if (!personId) return;
+    
+    const scrollY = window.scrollY;
+    currentScrollPosition = scrollY;
+    
+    // SessionStorage'a kaydet
+    sessionStorage.setItem('person_scroll_' + personId, scrollY);
+    
+    // Global değişkene de kaydet (yedek)
+    window.__personScrollY = scrollY;
+}
+
+// ——— Scroll pozisyonunu geri yükle ———
+function restoreScrollPosition() {
+    const personId = new URLSearchParams(window.location.search).get('id');
+    if (!personId) return;
+    
+    // Önce sessionStorage'dan al
+    let savedY = sessionStorage.getItem('person_scroll_' + personId);
+    
+    // Yoksa global değişkenden al
+    if (!savedY && window.__personScrollY) {
+        savedY = window.__personScrollY;
+    }
+    
+    if (savedY && parseInt(savedY) > 0) {
+        const targetY = parseInt(savedY);
+        
+        // Hemen dene
+        window.scrollTo({ top: targetY, behavior: 'instant' });
+        
+        // İçerik yüklenirken birkaç kez daha dene
+        const delays = [50, 100, 200, 300, 500, 1000];
+        delays.forEach(delay => {
+            setTimeout(() => {
+                if (Math.abs(window.scrollY - targetY) > 10) {
+                    window.scrollTo({ top: targetY, behavior: 'instant' });
+                }
+            }, delay);
+        });
+    }
+}
 
 // ——— Init ———
 window.addEventListener('load', async () => {
@@ -23,42 +74,57 @@ window.addEventListener('load', async () => {
     if (!session) return;
 
     await loadCache();
-    initPersonPage();
+    await initPersonPage();
 });
 
+// bfcache'den dönüş
 window.addEventListener('pageshow', (event) => {
     if (event.persisted) {
         refreshPersonMoviesUI();
-        // bfcache'den dönüşte scroll pozisyonunu koru
-        const key = 'person_scroll_' + new URLSearchParams(window.location.search).get('id');
-        const savedY = sessionStorage.getItem(key);
-        if (savedY) {
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => window.scrollTo({ top: parseInt(savedY), behavior: 'instant' }));
-            });
-        }
+        restoreScrollPosition();
     }
 });
 
-// Sayfadan ayrılırken scroll pozisyonunu kaydet
-window.addEventListener('pagehide', () => {
-    const key = 'person_scroll_' + new URLSearchParams(window.location.search).get('id');
-    sessionStorage.setItem(key, window.scrollY);
+// Her scroll'da kaydet (throttle ile)
+let scrollTimer;
+window.addEventListener('scroll', () => {
+    if (scrollTimer) clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(saveScrollPosition, 50);
+}, { passive: true });
+
+// Sayfadan ayrılırken kaydet
+window.addEventListener('pagehide', saveScrollPosition);
+window.addEventListener('beforeunload', saveScrollPosition);
+
+// Görünürlük değişince kaydet
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        saveScrollPosition();
+    }
 });
 
-function initPersonPage() {
+// Scroll pozisyonunu tıklama anında kaydet
+function savePersonScroll() {
+    saveScrollPosition();
+}
+
+async function initPersonPage() {
     const params = new URLSearchParams(window.location.search);
     const personId = params.get('id');
 
     if (personId) {
-        renderPerson(personId);
+        await renderPerson(personId);
         setupInfiniteScroll();
         createSmartScrollButton();
+        
+        // Scroll'u geri yükle
+        restoreScrollPosition();
     } else {
         window.location.href = 'index.html';
     }
 
     document.getElementById('backBtn')?.addEventListener('click', () => {
+        saveScrollPosition();
         if (document.referrer && !document.referrer.includes('login')) history.back();
         else window.location.replace('index.html');
     });
@@ -207,7 +273,7 @@ function loadMoreMovies() {
         const mediaType = movie.media_type || (movie.first_air_date ? 'tv' : 'movie');
 
         return `
-        <div class="movie-card animate-fadeIn" data-id="${movie.id}" onclick="window.location.href='details.html?id=${movie.id}&type=${mediaType}'">
+        <div class="movie-card animate-fadeIn" data-id="${movie.id}" onclick="savePersonScroll(); window.location.href='details.html?id=${movie.id}&type=${mediaType}'">
             <div class="absolute top-2 left-2 z-20 pointer-events-none">
                 <div class="watch-status-icon bg-black/80 ${isWatched ? 'text-[#7cfc00]' : 'text-white/20'} p-2 rounded-xl border border-white/5 flex items-center justify-center">
                     <i class="fa-solid ${isWatched ? 'fa-check' : 'fa-eye-slash'} text-[12px]"></i>
@@ -326,4 +392,3 @@ function createSmartScrollButton() {
         lastScrollY = currentScrollY;
     }, { passive: true });
 }
-

@@ -158,8 +158,9 @@ async function restoreHomeState(savedState) {
     const searchInput = document.getElementById('tmdbSearch');
     if (searchInput && savedState.searchQuery) {
         searchInput.value = savedState.searchQuery;
-        const clearBtn = document.getElementById('clearSearch');
-        if (clearBtn) clearBtn.style.opacity = '1';
+        // clearSearch butonu setupSearchClear tarafından yönetiliyor,
+        // value set edildikten sonra input eventi dispatch ederek opacity'yi tetikle
+        searchInput.dispatchEvent(new Event('input'));
     }
     // Arama sonuçlarını geri yükle
     if (savedState.searchOpen && savedState.searchResultsHTML) {
@@ -822,11 +823,21 @@ async function saveAndRefresh(id, type) {
 function setupSearchClear() {
     const input = document.getElementById('tmdbSearch');
     if (!input) return;
-    let btn = document.getElementById('clearSearch') || document.createElement('div');
-    btn.id = 'clearSearch';
-    btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
-    btn.style.cssText = `position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; opacity: 0; color: #ff4444; z-index: 1001; font-size: 18px; transition: 0.2s;`;
-    if (!document.getElementById('clearSearch')) input.parentElement.appendChild(btn);
+    let btn = document.getElementById('clearSearch');
+    if (!btn) {
+        btn = document.createElement('div');
+        btn.id = 'clearSearch';
+        btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+        btn.style.cssText = 'position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;opacity:0;color:#ff4444;z-index:1001;font-size:18px;transition:0.2s;';
+        input.parentElement.appendChild(btn);
+    }
+    // Değer değiştiğinde opacity güncelle
+    const syncOpacity = () => {
+        btn.style.opacity = input.value.length > 0 ? '1' : '0';
+    };
+    input.addEventListener('input', syncOpacity);
+    // Sayfa restore edildiğinde mevcut değere göre ayarla
+    syncOpacity();
     btn.onclick = () => {
         input.value = '';
         const resultsDiv = document.getElementById('searchResults');
@@ -890,4 +901,5 @@ function createScrollButton() {
         lastScrollY = currentScrollY;
     }, { passive: true });
 }
+
 

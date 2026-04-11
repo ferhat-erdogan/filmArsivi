@@ -60,6 +60,15 @@ window.addEventListener('load', async () => {
     if (movieId) {
         showDetailsSkeleton();
         await renderDetails(movieId, type);
+
+        // Scroll restore (Android geri tuşu sayfayı yeniden yükler)
+        const key = 'details_scroll_' + movieId;
+        const savedY = sessionStorage.getItem(key);
+        if (savedY && parseInt(savedY) > 0) {
+            setTimeout(() => {
+                window.scrollTo({ top: parseInt(savedY), behavior: 'instant' });
+            }, 200);
+        }
     } else {
         window.location.href = 'index.html';
     }
@@ -244,12 +253,12 @@ async function renderDetails(id, type) {
     }).join('');
 
     movieDetailsContainer.innerHTML = `
-        <div class="flex justify-between items-start mb-1">
-            <h1 class="text-3xl font-black uppercase tracking-tight leading-none flex-1 pr-4 text-white">${title}</h1>
-            <div class="flex items-center gap-4">
+        <div class="flex justify-between items-start mb-1 gap-3">
+            <h1 class="text-3xl font-black uppercase tracking-tight leading-none min-w-0 flex-1 text-white break-words">${title}</h1>
+            <div class="flex items-center gap-3 flex-shrink-0">
                 <a href="${googleSearchUrl}" target="_blank" class="text-white/20 hover:text-[#EA4335] transition-colors text-xl"><i class="fa-brands fa-google"></i></a>
                 <a href="https://www.themoviedb.org/${type}/${id}" target="_blank" class="text-white/20 hover:text-[#01b4e4] transition-colors text-xl"><i class="fa-solid fa-up-right-from-square"></i></a>
-                <div class="text-[#ffaa00] font-black text-2xl flex items-center"><i class="fa-solid fa-star text-sm mr-2"></i>${(movie.vote_average || 0).toFixed(1)}</div>
+                <div class="text-[#ffaa00] font-black text-xl flex items-center whitespace-nowrap"><i class="fa-solid fa-star text-sm mr-1.5"></i>${(movie.vote_average || 0).toFixed(1)}</div>
             </div>
         </div>
         <div class="text-[10px] font-bold text-white/30 uppercase tracking-[2px] mb-4">${mediaTypeText} • ${year}${durationText}</div>
@@ -439,3 +448,4 @@ function handleFullscreenChange() {
         screen.orientation.unlock();
     }
 }
+
