@@ -442,7 +442,8 @@ async function renderHome() {
         const yearEndParam = activeFilter.yearRange.end ? `&primary_release_date.lte=${activeFilter.yearRange.end}-12-31` : '';
         const langParam = activeFilter.isTurkish ? '&with_original_language=tr' : '';
         const animationParam = activeFilter.hideAnimation ? '&without_genres=16' : '';
-        const adultParam = activeFilter.hideAdult ? '&include_adult=false' : '';
+        //const adultParam = activeFilter.hideAdult ? '&include_adult=false' : '';
+        const adultParam = activeFilter.hideAdult ? '&include_adult=false&certification_country=US&certification.lte=PG-13' : '';
 
         let tmdbSort = activeFilter.sortBy;
         if (tmdbSort === 'created_at.desc') tmdbSort = 'popularity.desc';
