@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body { background: #1a1a1a; display: flex; flex-wrap: wrap; gap: 32px; padding: 40px; font-family: sans-serif; align-items: flex-start; }
+  .icon-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .label { color: #666; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+  canvas { border-radius: 22.5%; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+</style>
+</head>
+<body>
+<script>
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// ——— ICON 1: Film Şeridi + FA Monogram ———
+function drawIcon1(canvas) {
+  const ctx = canvas.getContext('2d');
+  const s = canvas.width;
+  const r = s * 0.2;
+
+  // BG gradient
+  const bg = ctx.createRadialGradient(s*0.3, s*0.25, 0, s*0.5, s*0.5, s*0.75);
+  bg.addColorStop(0, '#1a2510');
+  bg.addColorStop(1, '#080a0f');
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.fillStyle = bg;
+  ctx.fill();
+
+  // Subtle grid pattern
+  ctx.save();
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.clip();
+  ctx.strokeStyle = 'rgba(124,252,0,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < s; i += s * 0.08) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, s); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(s, i); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Film şeridi - sol ve sağ kenar delikleri
+  const holeR = s * 0.042;
+  const holeX1 = s * 0.12;
+  const holeX2 = s * 0.88;
+  const holeYs = [0.22, 0.38, 0.54, 0.70, 0.86];
+
+  for (const hy of holeYs) {
+    // sol delik
+    ctx.beginPath();
+    ctx.arc(holeX1, s * hy, holeR, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(124,252,0,0.12)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(124,252,0,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // sağ delik
+    ctx.beginPath();
+    ctx.arc(holeX2, s * hy, holeR, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(124,252,0,0.12)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(124,252,0,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Şerit çizgileri
+  ctx.strokeStyle = 'rgba(124,252,0,0.08)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(s*0.19, 0); ctx.lineTo(s*0.19, s); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(s*0.81, 0); ctx.lineTo(s*0.81, s); ctx.stroke();
+
+  // FA harfleri - büyük, bold
+  ctx.save();
+  ctx.shadowColor = '#7cfc00';
+  ctx.shadowBlur = s * 0.12;
+  ctx.fillStyle = '#7cfc00';
+  ctx.font = `900 ${s * 0.38}px 'Arial Black', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('FA', s * 0.5, s * 0.5);
+  ctx.restore();
+
+  // Alt küçük yazı
+  ctx.fillStyle = 'rgba(124,252,0,0.4)';
+  ctx.font = `700 ${s * 0.07}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.letterSpacing = '4px';
+  ctx.fillText('ARŞİV', s * 0.5, s * 0.72);
+}
+
+// ——— ICON 2: Play + Lens ———
+function drawIcon2(canvas) {
+  const ctx = canvas.getContext('2d');
+  const s = canvas.width;
+  const r = s * 0.2;
+  const cx = s / 2, cy = s / 2;
+
+  // BG
+  const bg = ctx.createLinearGradient(0, 0, s, s);
+  bg.addColorStop(0, '#0c0f0a');
+  bg.addColorStop(1, '#080a0f');
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.fillStyle = bg;
+  ctx.fill();
+
+  ctx.save();
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.clip();
+
+  // Glow halkası
+  const glow = ctx.createRadialGradient(cx, cy, s*0.1, cx, cy, s*0.5);
+  glow.addColorStop(0, 'rgba(124,252,0,0.07)');
+  glow.addColorStop(1, 'rgba(124,252,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, s, s);
+
+  // Dış halka
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.38, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(124,252,0,0.2)';
+  ctx.lineWidth = s * 0.015;
+  ctx.stroke();
+
+  // Orta halka
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.28, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(124,252,0,0.35)';
+  ctx.lineWidth = s * 0.02;
+  ctx.stroke();
+
+  // Play üçgeni
+  const ps = s * 0.22;
+  ctx.beginPath();
+  ctx.moveTo(cx - ps * 0.4, cy - ps * 0.6);
+  ctx.lineTo(cx + ps * 0.7, cy);
+  ctx.lineTo(cx - ps * 0.4, cy + ps * 0.6);
+  ctx.closePath();
+  const pg = ctx.createLinearGradient(cx - ps*0.4, cy - ps*0.6, cx + ps*0.7, cy + ps*0.6);
+  pg.addColorStop(0, '#7cfc00');
+  pg.addColorStop(1, '#4dcc00');
+  ctx.fillStyle = pg;
+  ctx.shadowColor = '#7cfc00';
+  ctx.shadowBlur = s * 0.08;
+  ctx.fill();
+
+  // Lens çizgileri (diyagonal kesikler)
+  ctx.shadowBlur = 0;
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const x1 = cx + Math.cos(angle) * s * 0.31;
+    const y1 = cy + Math.sin(angle) * s * 0.31;
+    const x2 = cx + Math.cos(angle) * s * 0.42;
+    const y2 = cy + Math.sin(angle) * s * 0.42;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = 'rgba(124,252,0,0.25)';
+    ctx.lineWidth = s * 0.012;
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+// ——— ICON 3: Geometrik Film + Yıldız ———
+function drawIcon3(canvas) {
+  const ctx = canvas.getContext('2d');
+  const s = canvas.width;
+  const r = s * 0.2;
+  const cx = s / 2, cy = s / 2;
+
+  // BG - koyu
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.fillStyle = '#07090e';
+  ctx.fill();
+
+  ctx.save();
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.clip();
+
+  // Köşe aksan çizgileri
+  const accentLen = s * 0.18;
+  const accentW = s * 0.025;
+  ctx.fillStyle = '#7cfc00';
+  // Sol üst
+  ctx.fillRect(s*0.08, s*0.08, accentLen, accentW);
+  ctx.fillRect(s*0.08, s*0.08, accentW, accentLen);
+  // Sağ üst
+  ctx.fillRect(s*0.92-accentLen, s*0.08, accentLen, accentW);
+  ctx.fillRect(s*0.92-accentW, s*0.08, accentW, accentLen);
+  // Sol alt
+  ctx.fillRect(s*0.08, s*0.92-accentW, accentLen, accentW);
+  ctx.fillRect(s*0.08, s*0.92-accentLen, accentW, accentLen);
+  // Sağ alt
+  ctx.fillRect(s*0.92-accentLen, s*0.92-accentW, accentLen, accentW);
+  ctx.fillRect(s*0.92-accentW, s*0.92-accentLen, accentW, accentLen);
+
+  // Film kamera icon - ortada
+  const cw = s * 0.42, ch = s * 0.28;
+  const cx0 = cx - cw/2, cy0 = cy - ch/2;
+
+  // Kamera gövdesi
+  ctx.beginPath();
+  roundRect(ctx, cx0, cy0, cw, ch, s*0.04);
+  ctx.fillStyle = 'rgba(124,252,0,0.08)';
+  ctx.fill();
+  ctx.strokeStyle = '#7cfc00';
+  ctx.lineWidth = s * 0.018;
+  ctx.stroke();
+
+  // Lens dairesi
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.1, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(124,252,0,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = '#7cfc00';
+  ctx.lineWidth = s * 0.016;
+  ctx.stroke();
+
+  // Lens iç nokta
+  ctx.beginPath();
+  ctx.arc(cx, cy, s * 0.04, 0, Math.PI * 2);
+  ctx.fillStyle = '#7cfc00';
+  ctx.shadowColor = '#7cfc00';
+  ctx.shadowBlur = s * 0.06;
+  ctx.fill();
+
+  // Viewfinder üst sol
+  ctx.shadowBlur = 0;
+  ctx.beginPath();
+  roundRect(ctx, cx0 + cw*0.72, cy0 + ch*0.15, cw*0.18, ch*0.35, s*0.02);
+  ctx.fillStyle = 'rgba(124,252,0,0.2)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(124,252,0,0.5)';
+  ctx.lineWidth = s * 0.012;
+  ctx.stroke();
+
+  // Alt yazı
+  ctx.fillStyle = 'rgba(124,252,0,0.5)';
+  ctx.font = `800 ${s*0.065}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('FİLM ARŞİVİ', cx, cy + ch/2 + s*0.1);
+
+  ctx.restore();
+}
+
+// ——— ICON 4: Sinematik F harfi ———
+function drawIcon4(canvas) {
+  const ctx = canvas.getContext('2d');
+  const s = canvas.width;
+  const r = s * 0.2;
+  const cx = s / 2, cy = s / 2;
+
+  // BG - deep gradient
+  const bg = ctx.createLinearGradient(0, 0, s, s);
+  bg.addColorStop(0, '#0d1108');
+  bg.addColorStop(0.5, '#080a0f');
+  bg.addColorStop(1, '#050709');
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.fillStyle = bg;
+  ctx.fill();
+
+  ctx.save();
+  roundRect(ctx, 0, 0, s, s, r);
+  ctx.clip();
+
+  // Radyal glow
+  const glow = ctx.createRadialGradient(cx*0.85, cy*0.85, 0, cx, cy, s*0.6);
+  glow.addColorStop(0, 'rgba(124,252,0,0.06)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, s, s);
+
+  // Film şeridi - yatay üst ve alt
+  const stripeH = s * 0.1;
+  const holeSize = s * 0.045;
+  const holeGap = s * 0.14;
+
+  // Üst şerit
+  ctx.fillStyle = 'rgba(124,252,0,0.06)';
+  ctx.fillRect(0, 0, s, stripeH);
+  ctx.strokeStyle = 'rgba(124,252,0,0.15)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0, 0, s, stripeH);
+
+  // Alt şerit
+  ctx.fillStyle = 'rgba(124,252,0,0.06)';
+  ctx.fillRect(0, s - stripeH, s, stripeH);
+  ctx.strokeStyle = 'rgba(124,252,0,0.15)';
+  ctx.strokeRect(0, s - stripeH, s, stripeH);
+
+  // Şerit delikleri - üst
+  for (let hx = holeGap; hx < s; hx += holeGap) {
+    const hy = stripeH / 2;
+    ctx.beginPath();
+    roundRect(ctx, hx - holeSize/2, hy - holeSize/2, holeSize, holeSize, holeSize*0.25);
+    ctx.fillStyle = '#080a0f';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(124,252,0,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  // Alt
+  for (let hx = holeGap; hx < s; hx += holeGap) {
+    const hy = s - stripeH / 2;
+    ctx.beginPath();
+    roundRect(ctx, hx - holeSize/2, hy - holeSize/2, holeSize, holeSize, holeSize*0.25);
+    ctx.fillStyle = '#080a0f';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(124,252,0,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Büyük "F" harfi - geometrik, cesur
+  ctx.save();
+  ctx.shadowColor = '#7cfc00';
+  ctx.shadowBlur = s * 0.15;
+
+  const fg = ctx.createLinearGradient(s*0.25, s*0.2, s*0.75, s*0.82);
+  fg.addColorStop(0, '#a8ff40');
+  fg.addColorStop(0.5, '#7cfc00');
+  fg.addColorStop(1, '#4dcc00');
+
+  ctx.font = `900 ${s*0.6}px 'Arial Black', Impact, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = fg;
+  ctx.fillText('F', cx, cy + s*0.02);
+  ctx.restore();
+
+  // Sağ alt "A" - küçük, vurgu
+  ctx.save();
+  ctx.fillStyle = 'rgba(124,252,0,0.35)';
+  ctx.font = `700 ${s*0.16}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('A', s*0.73, s*0.72);
+  ctx.restore();
+
+  ctx.restore();
+}
+
+// ——— Render all ———
+const icons = [
+  { fn: drawIcon1, label: 'Versiyon 1 — FA Monogram + Şerit' },
+  { fn: drawIcon2, label: 'Versiyon 2 — Play + Lens' },
+  { fn: drawIcon3, label: 'Versiyon 3 — Kamera + Köşe Aksan' },
+  { fn: drawIcon4, label: 'Versiyon 4 — Sinematik F' },
+];
+
+icons.forEach(({ fn, label }) => {
+  const wrap = document.createElement('div');
+  wrap.className = 'icon-wrap';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  canvas.style.width = '160px';
+  canvas.style.height = '160px';
+  fn(canvas);
+
+  const lbl = document.createElement('div');
+  lbl.className = 'label';
+  lbl.textContent = label;
+
+  // Download butonu
+  const btn = document.createElement('button');
+  btn.textContent = 'İndir PNG';
+  btn.style.cssText = 'background:#7cfc00;color:#000;border:none;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;letter-spacing:1px;';
+  btn.onclick = () => {
+    const a = document.createElement('a');
+    a.download = label.split('—')[0].trim().replace(/\s+/g, '_') + '_512.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  };
+
+  wrap.appendChild(canvas);
+  wrap.appendChild(lbl);
+  wrap.appendChild(btn);
+  document.body.appendChild(wrap);
+});
+</script>
+</body>
+</html>
+

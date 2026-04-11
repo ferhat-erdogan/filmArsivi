@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Film Arşivi | Giriş</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --accent: #7cfc00; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            background: #080a0f;
+            background-image: radial-gradient(ellipse at top right, #0d1a0d 0%, transparent 60%),
+                              radial-gradient(ellipse at bottom left, #0a0d14 0%, transparent 60%);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Animated background dots */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(124,252,0,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 48px 40px;
+            background: rgba(12, 16, 24, 0.9);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 32px;
+            backdrop-filter: blur(30px);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+            animation: cardIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .accent-glow {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(124,252,0,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, rgba(124,252,0,0.15), rgba(124,252,0,0.05));
+            border: 1px solid rgba(124,252,0,0.3);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 0 30px rgba(124,252,0,0.1);
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px 48px 16px 16px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .input-field:focus {
+            border-color: rgba(124,252,0,0.5);
+            background: rgba(124,252,0,0.04);
+            box-shadow: 0 0 0 3px rgba(124,252,0,0.08);
+        }
+
+        .input-field::placeholder { color: rgba(255,255,255,0.2); }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.2);
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .input-icon:hover { color: var(--accent); }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 25px rgba(124,252,0,0.3);
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            box-shadow: 0 12px 35px rgba(124,252,0,0.4);
+            transform: translateY(-1px);
+        }
+
+        .login-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 15px rgba(124,252,0,0.2);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-btn .btn-spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(0,0,0,0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .alert-box {
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            animation: alertIn 0.3s ease forwards;
+        }
+
+        @keyframes alertIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-error {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+            color: #f87171;
+        }
+
+        .alert-success {
+            background: rgba(124,252,0,0.08);
+            border: 1px solid rgba(124,252,0,0.2);
+            color: var(--accent);
+        }
+
+        .alert-warning {
+            background: rgba(251,191,36,0.1);
+            border: 1px solid rgba(251,191,36,0.25);
+            color: #fbbf24;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+        }
+
+        .divider span {
+            font-size: 9px;
+            font-weight: 900;
+            color: rgba(255,255,255,0.15);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .tab-btn:not(.active) {
+            background: transparent;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 4px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Config warning badge */
+        .config-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(251,191,36,0.08);
+            border: 1px solid rgba(251,191,36,0.2);
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            font-size: 10px;
+            color: #fbbf24;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <div class="login-card mx-4">
+        <div class="accent-glow"></div>
+
+        <!-- Logo -->
+        <div class="logo-icon">
+            <i class="fa-solid fa-film text-[#7cfc00] text-2xl"></i>
+        </div>
+
+        <h1 class="text-center text-white font-black text-xl tracking-[4px] uppercase mb-1">FİLM <span class="text-[#7cfc00]">ARŞİVİ</span></h1>
+        <p class="text-center text-white/20 text-[10px] font-bold tracking-[2px] uppercase mb-6">Kişisel Film & Dizi Takip</p>
+
+        <!-- Config warning (URL params yoksa göster) -->
+        <div id="configWarning" class="config-badge" style="display:none;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Geçersiz bağlantı. URL formatı: <code class="opacity-70">?url=...&key=...</code></span>
+        </div>
+
+        <!-- Alert Box -->
+        <div id="alertBox" class="alert-box"></div>
+
+        <!-- Tabs -->
+        <div class="tab-container">
+            <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Giriş Yap</button>
+            <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">Kayıt Ol</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm">
+            <div class="input-wrapper">
+                <input type="email" id="loginEmail" class="input-field" placeholder="E-posta adresi" autocomplete="email">
+                <i class="fa-solid fa-envelope input-icon"></i>
+            </div>
+            <div class="input-wrapper">
+                <input type="password" id="loginPassword" class="input-field" placeholder="Şifre" autocomplete="current-password">
+                <i class="fa-solid fa-eye input-icon" id="loginEyeIcon" onclick="togglePassword('loginPassword', 'loginEyeIcon')"></i>
+            </div>
+            <button class="login-btn" id="loginBtn" onclick="handleLogin()">
+                <span id="loginBtnText">GİRİŞ YAP</span>
+                <div class="btn-spinner" id="loginSpinner"></div>
+            </button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" style="display:none;">
+            <div class="input-wrapper">
+                <input type="email" id="regEmail" class="input-field" placeholder="E-posta adresi" autocomplete="email">
+                <i class="fa-solid fa-envelope input-icon"></i>
+            </div>
+            <div class="input-wrapper">
+                <input type="password" id="regPassword" class="input-field" placeholder="Şifre (min 6 karakter)" autocomplete="new-password">
+                <i class="fa-solid fa-eye input-icon" id="regEyeIcon" onclick="togglePassword('regPassword', 'regEyeIcon')"></i>
+            </div>
+            <div class="input-wrapper">
+                <input type="password" id="regPasswordConfirm" class="input-field" placeholder="Şifre tekrar" autocomplete="new-password">
+                <i class="fa-solid fa-lock input-icon"></i>
+            </div>
+            <button class="login-btn" id="registerBtn" onclick="handleRegister()">
+                <span id="registerBtnText">KAYIT OL</span>
+                <div class="btn-spinner" id="registerSpinner"></div>
+            </button>
+        </div>
+
+        <div class="divider"><span>Güvenli Bağlantı</span></div>
+
+        <div class="flex items-center justify-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-[#7cfc00] shadow-[0_0_8px_#7cfc00] animate-pulse"></div>
+            <span class="text-[9px] text-white/20 font-bold tracking-[2px] uppercase" id="connectionStatus">Bağlantı Kontrol Ediliyor...</span>
+        </div>
+    </div>
+
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+    (() => {
+        // ——— URL'den Supabase credentials al ———
+        const params = new URLSearchParams(window.location.search);
+        const SUPABASE_URL = params.get('url');
+        const SUPABASE_KEY = params.get('key');
+
+        const configWarning = document.getElementById('configWarning');
+        const connectionStatus = document.getElementById('connectionStatus');
+
+        // ——— localStorage'dan mevcut credentials oku ———
+        const LS_URL = localStorage.getItem('fa_sb_url');
+        const LS_KEY = localStorage.getItem('fa_sb_key');
+
+        // URL parametresi yoksa localStorage'dan al (önceden giriş yapıldıysa)
+        const ACTIVE_URL = SUPABASE_URL || LS_URL;
+        const ACTIVE_KEY = SUPABASE_KEY || LS_KEY;
+
+        // Supabase client
+        let supabase = null;
+        if (ACTIVE_URL && ACTIVE_KEY) {
+            supabase = window.supabase.createClient(ACTIVE_URL, ACTIVE_KEY, {
+                auth: { persistSession: true, autoRefreshToken: true, storageKey: 'fa_supabase_auth', detectSessionInUrl: false }
+            });
+        }
+
+        // URL parametreleri de yoksa, localStorage'dan da yoksa → uyar
+        if (!ACTIVE_URL || !ACTIVE_KEY) {
+            configWarning.style.display = 'flex';
+            connectionStatus.textContent = 'BAĞLANTI PARAMETRELERİ EKSİK';
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('registerBtn').disabled = true;
+        } else if (!SUPABASE_URL) {
+            // URL'de parametre yok ama localStorage'dan alındı
+            connectionStatus.textContent = 'KAYITLI BAĞLANTI KULLANILIYOR';
+        } else {
+            connectionStatus.textContent = 'SUPABASE BAĞLANTI HAZIR';
+        }
+
+        // Zaten aktif oturum varsa direkt ana sayfaya at
+        if (supabase) {
+            supabase.auth.getSession().then(({ data }) => {
+                if (data.session) {
+                    saveCredentialsAndRedirect(data.session);
+                }
+            });
+        }
+
+        // ——— Tab Switch ———
+        window.switchTab = (tab) => {
+            const isLogin = tab === 'login';
+            document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('tabLogin').className = `tab-btn ${isLogin ? 'active' : ''}`;
+            document.getElementById('tabRegister').className = `tab-btn ${!isLogin ? 'active' : ''}`;
+            clearAlert();
+        };
+
+        // ——— Alert ———
+        function showAlert(message, type = 'error') {
+            const box = document.getElementById('alertBox');
+            const icons = { error: 'fa-circle-xmark', success: 'fa-circle-check', warning: 'fa-triangle-exclamation' };
+            box.className = `alert-box alert-${type}`;
+            box.style.display = 'flex';
+            box.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${message}</span>`;
+        }
+
+        function clearAlert() {
+            const box = document.getElementById('alertBox');
+            box.style.display = 'none';
+        }
+
+        // ——— Loading State ———
+        function setLoading(btnId, spinnerId, textId, loading) {
+            const btn = document.getElementById(btnId);
+            const spinner = document.getElementById(spinnerId);
+            const text = document.getElementById(textId);
+            btn.disabled = loading;
+            spinner.style.display = loading ? 'block' : 'none';
+            text.style.display = loading ? 'none' : 'block';
+        }
+
+        // ——— Password Toggle ———
+        window.togglePassword = (inputId, iconId) => {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash input-icon';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye input-icon';
+            }
+            icon.setAttribute('onclick', `togglePassword('${inputId}', '${iconId}')`);
+        };
+
+        // ——— Credentials Kaydet & Yönlendir ———
+        function saveCredentialsAndRedirect(session) {
+            // URL ve key'i localStorage'a kaydet — tüm sekmeler + tarayıcı yeniden açılışında geçerli
+            if (ACTIVE_URL) localStorage.setItem('fa_sb_url', ACTIVE_URL);
+            if (ACTIVE_KEY) localStorage.setItem('fa_sb_key', ACTIVE_KEY);
+            // Ana sayfaya yönlendir
+            window.location.replace('index.html');
+        }
+
+        // ——— Giriş Yap ———
+        window.handleLogin = async () => {
+            if (!supabase) return;
+            clearAlert();
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showAlert('E-posta ve şifre zorunludur.', 'warning');
+                return;
+            }
+
+            setLoading('loginBtn', 'loginSpinner', 'loginBtnText', true);
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            setLoading('loginBtn', 'loginSpinner', 'loginBtnText', false);
+
+            if (error) {
+                const msgs = {
+                    'Invalid login credentials': 'E-posta veya şifre hatalı.',
+                    'Email not confirmed': 'E-postanızı onaylayınız.',
+                    'Too many requests': 'Çok fazla deneme. Lütfen bekleyin.'
+                };
+                showAlert(msgs[error.message] || error.message, 'error');
+                return;
+            }
+
+            showAlert('Giriş başarılı! Yönlendiriliyorsunuz...', 'success');
+            setTimeout(() => saveCredentialsAndRedirect(data.session), 600);
+        };
+
+        // ——— Kayıt Ol ———
+        window.handleRegister = async () => {
+            if (!supabase) return;
+            clearAlert();
+
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regPasswordConfirm').value;
+
+            if (!email || !password) {
+                showAlert('E-posta ve şifre zorunludur.', 'warning');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('Şifre en az 6 karakter olmalıdır.', 'warning');
+                return;
+            }
+
+            if (password !== confirm) {
+                showAlert('Şifreler eşleşmiyor.', 'error');
+                return;
+            }
+
+            setLoading('registerBtn', 'registerSpinner', 'registerBtnText', true);
+
+            const { data, error } = await supabase.auth.signUp({ email, password });
+
+            setLoading('registerBtn', 'registerSpinner', 'registerBtnText', false);
+
+            if (error) {
+                showAlert(error.message, 'error');
+                return;
+            }
+
+            if (data.session) {
+                showAlert('Kayıt başarılı! Yönlendiriliyorsunuz...', 'success');
+                setTimeout(() => saveCredentialsAndRedirect(data.session), 600);
+            } else {
+                // E-posta onayı gerekiyorsa
+                showAlert('Kaydınız oluşturuldu. E-posta kutunuzu onaylayın.', 'success');
+            }
+        };
+
+        // Enter tuşu desteği
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+            const loginVisible = document.getElementById('loginForm').style.display !== 'none';
+            if (loginVisible) handleLogin();
+            else handleRegister();
+        });
+
+    })();
+    </script>
+</body>
+</html>
+

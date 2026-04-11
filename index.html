@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Film Arşivi</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <style>
+        @keyframes skeletonShimmer {
+            to { background-position: -200% 0; }
+        }
+        @keyframes skeletonPulse {
+            0%,100% { opacity: 1; } 50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-['Outfit'] antialiased">
+
+    <header class="glass-header fixed top-0 w-full z-[1000] px-6 py-6 border-b border-white/5">
+        <div class="max-w-xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-xl font-black tracking-[4px] uppercase text-white">FİLM <span class="text-[#7cfc00]">ARŞİVİ</span></h1>
+                <button onclick="handleLogout()" class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/30 hover:text-red-400 hover:border-red-400/30 transition-all text-sm" title="Çıkış Yap">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+            <div class="relative group">
+                <input type="text" id="tmdbSearch" placeholder="Film veya Dizi Ara..."
+                    class="input-field w-full pl-12 pr-10 py-4 bg-white/5 border border-white/10 rounded-2xl focus:border-[#7cfc00] outline-none transition-all placeholder:text-white/20 text-[14px]">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#7cfc00]"></i>
+            </div>
+            <div id="searchResults" style="display: none;" class="mt-3 space-y-2 max-h-[70vh] overflow-y-auto no-scrollbar rounded-2xl"></div>
+        </div>
+    </header>
+
+    <main class="max-w-xl mx-auto pt-52 pb-24 min-h-screen px-4">
+        <div id="filterSection" class="min-h-[100px] mb-4"></div>
+        <div id="movieContainer" class="movie-grid grid grid-cols-2 gap-4"></div>
+    </main>
+
+    <!-- Genre Modal -->
+    <div id="genreModal" class="hidden fixed inset-0 z-[2000] flex items-end justify-center px-4 pb-10">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="toggleGenreModal(false)"></div>
+        <div class="relative w-full max-w-xl bg-[#0f1218] border border-white/10 rounded-[32px] overflow-hidden animate-fadeIn shadow-2xl">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center" id="genreModalHeader">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-[12px] font-black tracking-[4px] uppercase text-white/50">GELİŞMİŞ FİLTRE</h3>
+                    <div id="modalBadgeContainer" class="bg-[#7cfc00]/10 border border-[#7cfc00]/20 px-2 py-0.5 rounded-lg">
+                        <span id="modalTotalBadge" class="text-[11px] font-black text-[#7cfc00] tabular-nums">0</span>
+                    </div>
+                </div>
+                <button onclick="toggleGenreModal(false)" class="text-white/20 hover:text-white text-xl p-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="modalGenreList" class="grid grid-cols-2 gap-3 p-6 max-h-[50vh] overflow-y-auto no-scrollbar"></div>
+            <div class="p-6 bg-white/[0.02] flex gap-3">
+                <button onclick="clearAllFilters()" class="w-full py-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-[10px] font-black uppercase tracking-widest text-red-500 active:scale-95 transition-all">TÜM FİLTRELERİ TEMİZLE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase SDK (diğer scriptlerden ÖNCE) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/core/supabase.js"></script>
+    <script src="js/core/api.js"></script>
+    <script src="js/services/archive.js"></script>
+    <script src="js/services/search.js"></script>
+    <script src="js/pages/home.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,31 @@
+:root {
+    --bg: #080a0f;
+    --surface: rgba(20, 24, 33, 0.7);
+    --accent: #7cfc00; /* Neon Yeşil */
+    --imdb-yellow: #ffaa00; /* IMDb ve İzledi Rengi */
+    --border: rgba(255, 255, 255, 0.08);
+    --font: 'Outfit', sans-serif;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at top right, #1a202c, transparent);
+    font-family: var(--font);
+    color: #e2e8f0;
+    margin: 0;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+.text-\[\#7cfc00\] {
+    text-shadow: 0 0 10px rgba(124, 252, 0, 0.3);
+}
+

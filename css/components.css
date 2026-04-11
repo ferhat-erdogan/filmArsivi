@@ -1,0 +1,298 @@
+/* ==========================================================================
+   FİLM ARŞİVİ - PREMIUM COMPONENTS SYSTEM (OPTIMIZED)
+   ========================================================================== */
+
+:root {
+    --accent: #7cfc00;
+    --border: rgba(255, 255, 255, 0.08);
+    --surface: rgba(255, 255, 255, 0.02);
+    --imdb-yellow: #f5c518;
+    --danger: #ff4444;
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    --bg-dark: rgba(10, 12, 18, 0.98);
+}
+
+/* =========================================================
+   GLOBAL PERFORMANCE & RESET
+   ========================================================= */
+
+#movieContainer {
+    content-visibility: auto;
+    contain-intrinsic-size: 1000px;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* =========================================================
+   1. FILM KARTLARI (MOVIE CARDS)
+   ========================================================= */
+
+.movie-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    z-index: 1;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.movie-card:active {
+    transform: scale(0.96);
+}
+
+.movie-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.movie-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+}
+
+/* Poster Placeholder */
+.movie-placeholder {
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%), #0f0f0f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: inherit;
+}
+
+.movie-placeholder i {
+    font-size: 24px;
+    color: var(--accent);
+    opacity: 0.15;
+    filter: drop-shadow(0 0 10px rgba(124, 252, 0, 0.1));
+}
+
+.movie-placeholder span {
+    font-size: 8px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.1);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   2. SEARCH SYSTEM
+   ========================================================= */
+
+#clearSearch {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--danger) !important;
+}
+
+#clearSearch:hover {
+    filter: drop-shadow(0 0 8px var(--danger));
+    transform: translateY(-50%) scale(1.1);
+}
+
+#searchResults {
+    z-index: 1000;
+    background: rgba(10, 12, 18, 0.75);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid var(--border);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    border-radius: 0 0 24px 24px;
+    margin-top: 4px;
+    overflow-y: auto;
+    max-height: 70vh;
+}
+
+#searchResults::-webkit-scrollbar {
+    width: 0px;
+}
+
+.add-btn-premium {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(124, 252, 0, 0.1);
+    border: 1px solid rgba(124, 252, 0, 0.2);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.add-btn-premium:active {
+    transform: scale(0.9);
+    background: var(--accent);
+    color: #000;
+}
+
+/* =========================================================
+   3. FILTERS & BADGES
+   ========================================================= */
+
+.genre-badge {
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--border);
+    font-size: 10px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.genre-badge.active {
+    background: var(--accent);
+    color: #000;
+    font-weight: 800;
+    border-color: var(--accent);
+    box-shadow: 0 4px 15px rgba(124, 252, 0, 0.3);
+}
+
+/* =========================================================
+   4. STATS PANEL
+   ========================================================= */
+
+.stats-wrapper {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 20px 0;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 100px;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.4; }
+}
+
+.status-text {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.status-count {
+    color: #fff;
+    background: rgba(124, 252, 0, 0.15);
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-left: 4px;
+}
+
+/* =========================================================
+   5. AKILLI SCROLL BUTONU (GLASSMORPHISM UPDATE)
+   ========================================================= */
+
+.scroll-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.05); /* Person.js stili şeffaflık */
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    color: var(--accent);
+    border: 1px solid rgba(124, 252, 0, 0.2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    z-index: 2000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    will-change: transform, opacity;
+}
+
+.scroll-btn:active {
+    transform: scale(0.9);
+    background: rgba(124, 252, 0, 0.15); /* Tıklayınca hafif yeşil parıltı */
+    border-color: var(--accent);
+}
+
+.scroll-btn:hover {
+    background: rgba(124, 252, 0, 0.1);
+    border-color: rgba(124, 252, 0, 0.5);
+    box-shadow: 0 0 25px rgba(124, 252, 0, 0.2);
+}
+
+.scroll-btn i {
+    transition: transform 0.3s ease;
+}
+
+/* =========================================================
+   6. UTILS & ANIMATIONS
+   ========================================================= */
+
+.pro-toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(15px);
+    padding: 14px 28px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    z-index: 10000;
+    border: 1px solid var(--accent);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+    transition: all 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.4s ease forwards;
+}
+
