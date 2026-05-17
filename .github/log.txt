@@ -1,7 +1,7 @@
 
-🔄 Güncelleme Tarihi: 16.05.2026 11:12:59
+🔄 Güncelleme Tarihi: 17.05.2026 11:29:41
 ════════════════════════════════
-❌ filmArsivi : HATA (000000)
+✅ filmArsivi : AKTİF (404)
 ════════════════════════════════
-📊 Başarılı: 0 | Hatalı: 1
+📊 Başarılı: 1 | Hatalı: 0
 
