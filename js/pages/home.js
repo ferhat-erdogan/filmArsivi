@@ -655,12 +655,12 @@ async function renderModalGenres() {
     <!-- Film ve Dizi Seçenekleri -->
     <button onclick="activeFilter.mediaType = (activeFilter.mediaType === 'movie' ? 'all' : 'movie'); renderModalGenres(); initHome(true);"
             class="flex items-center justify-between p-4 rounded-xl border transition-all ${activeFilter.mediaType === 'movie' ? 'bg-[#7cfc00]/10 border-[#7cfc00] text-[#7cfc00]' : 'bg-white/5 border-white/10 text-white/40'}">
-            <span class="text-[10px] font-black uppercase tracking-widest">Sadece Film</span>
+            <span class="text-[10px] font-black uppercase tracking-widest">Film</span>
             <i class="fa-solid ${activeFilter.mediaType === 'movie' ? 'fa-check-circle' : 'fa-circle'} text-[10px]"></i>
         </button>
         <button onclick="activeFilter.mediaType = (activeFilter.mediaType === 'tv' ? 'all' : 'tv'); renderModalGenres(); initHome(true);"
             class="flex items-center justify-between p-4 rounded-xl border transition-all ${activeFilter.mediaType === 'tv' ? 'bg-[#7cfc00]/10 border-[#7cfc00] text-[#7cfc00]' : 'bg-white/5 border-white/10 text-white/40'}">
-            <span class="text-[10px] font-black uppercase tracking-widest">Sadece Dizi</span>
+            <span class="text-[10px] font-black uppercase tracking-widest">Dizi</span>
             <i class="fa-solid ${activeFilter.mediaType === 'tv' ? 'fa-check-circle' : 'fa-circle'} text-[10px]"></i>
         </button>
         
