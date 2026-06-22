@@ -652,12 +652,12 @@ async function renderModalGenres() {
     <!-- Film ve Dizi Seçenekleri -->
         <button onclick="activeFilter.status = (activeFilter.status === 'movie' ? 'all' : 'movie'); renderModalGenres(); initHome(true);"
             class="flex items-center justify-between p-4 rounded-xl border transition-all ${activeFilter.status === 'movie' ? 'bg-[#7cfc00]/10 border-[#7cfc00] text-[#7cfc00]' : 'bg-white/5 border-white/10 text-white/40'}">
-            <span class="text-[10px] font-black uppercase tracking-widest">Sadece Film</span>
+            <span class="text-[10px] font-black uppercase tracking-widest">Film</span>
             <i class="fa-solid ${activeFilter.status === 'movie' ? 'fa-check-circle' : 'fa-circle'} text-[10px]"></i>
         </button>
         <button onclick="activeFilter.status = (activeFilter.status === 'tv' ? 'all' : 'tv'); renderModalGenres(); initHome(true);"
             class="flex items-center justify-between p-4 rounded-xl border transition-all ${activeFilter.status === 'tv' ? 'bg-[#7cfc00]/10 border-[#7cfc00] text-[#7cfc00]' : 'bg-white/5 border-white/10 text-white/40'}">
-            <span class="text-[10px] font-black uppercase tracking-widest">Sadece Dizi</span>
+            <span class="text-[10px] font-black uppercase tracking-widest">Dizi</span>
         </button>
         <button onclick="toggleFilterItem('isTurkish')"
             class="flex items-center justify-between p-4 rounded-xl border transition-all ${activeFilter.isTurkish ? 'bg-[#7cfc00]/10 border-[#7cfc00] text-[#7cfc00]' : 'bg-white/5 border-white/10 text-white/40'}">
